@@ -1,12 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
+import { App } from "./App";
+import { initializeFirebase } from "./firebase";
 
-const App = () => {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
-};
+const firebaseApp = initializeFirebase({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID
+});
 
-render(<App />, document.getElementById("root"));
+render(<App firebaseApp={firebaseApp} />, document.getElementById("root"));
