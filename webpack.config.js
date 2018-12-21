@@ -1,3 +1,4 @@
+const { EnvironmentPlugin } = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -35,6 +36,11 @@ module.exports = {
         from: "node_modules/sanitize.css/sanitize.css",
         to: "vendor/"
       }
+    ]),
+    new EnvironmentPlugin([
+      "FIREBASE_API_KEY",
+      "FIREBASE_AUTH_DOMAIN",
+      "FIREBASE_PROJECT_ID"
     ])
   ],
   devServer: {
