@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
+import { createBrowserHistory } from "history";
 import { App } from "./App";
 import { initializeFirebase } from "./firebase";
 
@@ -9,4 +10,8 @@ const firebaseApp = initializeFirebase({
   projectId: process.env.FIREBASE_PROJECT_ID
 });
 
-render(<App firebaseApp={firebaseApp} />, document.getElementById("root"));
+const history = createBrowserHistory();
+render(
+  <App firebaseApp={firebaseApp} history={history} />,
+  document.getElementById("root")
+);

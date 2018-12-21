@@ -1,10 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, createContext } from "react";
 import firebase from "firebase";
-import { Login } from "./components/Login";
-import { Logout } from "./components/Logout";
+import UniversalRouter from "universal-router";
+import { History } from "history";
+import { IndexPage } from "./pages/IndexPage";
+import { LoginPage } from "./pages/LoginPage";
+import { LogoutPage } from "./pages/LogoutPage";
 
-function App({ firebaseApp }: { firebaseApp: firebase.app.App }) {
+const routes = [
+  {
+    path: "",
+    action: (context: any) => {
+      return { content: IndexPage };
+    }
+  },
+  {
+    path: "/login",
+    action: (context: any) => {
+      return { content: LoginPage };
+    }
+  },
+  {
+    path: "/logout",
+    action: (context: any) => {
+      return { content: LogoutPage };
+    }
+  }
+];
+
+const AppContext = createContext(null);
+const App = ({
+  firebaseApp,
+  history
+}: {
+  firebaseApp: firebase.app.App;
+  history: History;
+}) => {
   const [user, setUser] = useState(null);
+  const Component = useRouter(routes, history);
 
   useEffect(() => {
     authHandler(setUser);
@@ -13,16 +45,43 @@ function App({ firebaseApp }: { firebaseApp: firebase.app.App }) {
     };
   }, []);
 
+  const appState = {
+    user,
+    firebaseAuth: firebaseApp.auth(),
+    history
+  };
   return (
-    <div>
-      {!user ? <Login firebaseAuth={firebaseApp.auth()} /> : <Logout />}
-    </div>
+    <AppContext.Provider value={appState}>
+      <Component />
+    </AppContext.Provider>
   );
-}
+};
 
-function authHandler(setUser) {
+const useRouter = (routes, history: History) => {
+  const [location, setLocation] = useState(history.location);
+  const [Component, setComponent]: [any, any] = useState(() => () => "");
+  const router = useMemo(() => new UniversalRouter(routes), [routes]);
+
+  useEffect(
+    () => {
+      router.resolve(location.pathname).then(route => {
+        if (route.redirect) {
+          history.replace(route.redirect);
+          return;
+        }
+        setComponent(() => route.content);
+      });
+      const unlisten = history.listen(location => setLocation(location));
+      return () => unlisten();
+    },
+    [history, location]
+  );
+
+  return Component;
+};
+
+const authHandler = setUser => {
   firebase.auth().onAuthStateChanged((user: firebase.User) => {
-    console.log(user);
     if (user) {
       // User is signed in.
       setUser(user);
@@ -31,6 +90,6 @@ function authHandler(setUser) {
       setUser(null);
     }
   });
-}
+};
 
-export { App };
+export { App, AppContext };

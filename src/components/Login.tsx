@@ -1,9 +1,38 @@
 import React from "react";
 import firebase from "firebase";
+import { History } from "history";
 
-function loginByGoogle(
+const Login = ({
+  firebaseAuth,
+  history
+}: {
+  firebaseAuth: firebase.auth.Auth;
+  history: History;
+}) => {
+  const handleClick = async event => {
+    event.preventDefault();
+    const loginResult = await loginByGoogle(firebaseAuth);
+    if (loginResult.error) {
+      // eslint-disable-next-line no-console
+      console.log(loginResult.error);
+      return;
+    }
+
+    history.push("/");
+  };
+
+  return (
+    <p>
+      <a href="#" onClick={handleClick}>
+        Google ログイン
+      </a>
+    </p>
+  );
+};
+
+const loginByGoogle = (
   firebaseAuth: firebase.auth.Auth
-): Promise<{ user: firebase.User; err: Error }> {
+): Promise<{ user?: firebase.User; error?: Error }> => {
   const provider = new firebase.auth.GoogleAuthProvider();
   return firebaseAuth
     .signInWithPopup(provider)
@@ -14,7 +43,7 @@ function loginByGoogle(
       // const token = result.credential.accessToken;
       // // The signed-in user info.
       // const user = result.user;
-      return { user: result.user, err: null };
+      return { user: result.user, error: null };
     })
     .catch(error => {
       // eslint-disable-next-line no-console
@@ -26,31 +55,8 @@ function loginByGoogle(
       // var email = error.email;
       // // The firebase.auth.AuthCredential type that was used.
       // var credential = error.credential;
-      return { user: null, err: error };
+      return { user: null, error: error };
     });
-}
-
-function Login({ firebaseAuth }: { firebaseAuth: firebase.auth.Auth }) {
-  const handleClick = async event => {
-    event.preventDefault();
-    const loginResult = await loginByGoogle(firebaseAuth);
-    if (loginResult.err) {
-      // eslint-disable-next-line no-console
-      console.log(loginResult.err);
-      return;
-    }
-  };
-
-  return (
-    <div>
-      <h2>Login</h2>
-      <p>
-        <a href="#" onClick={handleClick}>
-          Google ログイン
-        </a>
-      </p>
-    </div>
-  );
-}
+};
 
 export { Login };

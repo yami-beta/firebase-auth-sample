@@ -1,36 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "firebase";
+import { History } from "history";
+import { Link } from "./Link";
 
-function Logout() {
-  const handleClick = async event => {
-    event.preventDefault();
-    await logoutGoogle();
-  };
+const Logout = ({
+  firebaseAuth,
+  history
+}: {
+  firebaseAuth: firebase.auth.Auth;
+  history: History;
+}) => {
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    // useEffect()の引数をasync関数にすると型エラーになるため
+    (async () => {
+      const result = await logoutGoogle(firebaseAuth);
+      if (result.error) {
+        // eslint-disable-next-line no-console
+        console.log(result.error);
+        return;
+      }
+
+      setDone(true);
+    })();
+  }, []);
 
   return (
     <div>
-      <h2>Logout</h2>
-      <p>
-        <a href="#" onClick={handleClick}>
-          ログアウト
-        </a>
-      </p>
+      {done ? (
+        <p>
+          ログアウトしました
+          <br />
+          <Link href="/" history={history}>
+            トップへ戻る
+          </Link>
+        </p>
+      ) : (
+        ""
+      )}
     </div>
   );
-}
+};
 
-function logoutGoogle() {
-  return firebase
-    .auth()
+const logoutGoogle = (auth): Promise<{ error?: Error }> => {
+  return auth
     .signOut()
     .then(() => {
-      // eslint-disable-next-line no-console
-      console.log("logout");
+      return { error: null };
     })
     .catch(error => {
-      // eslint-disable-next-line no-console
-      console.log(error);
+      return { error };
     });
-}
+};
 
 export { Logout };
