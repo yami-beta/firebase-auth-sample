@@ -1,6 +1,6 @@
 import React from "react";
 import firebase from "firebase/app";
-import 'firebase/auth';
+import "firebase/auth";
 import { History } from "history";
 
 const Login = ({
