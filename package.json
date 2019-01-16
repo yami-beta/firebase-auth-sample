@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@firebase/app-types": "^0.3.2",
+    "@firebase/testing": "^0.5.3",
     "@types/history": "^4.7.2",
     "@types/node": "^10.12.15",
     "@types/react": "^16.7.17",
