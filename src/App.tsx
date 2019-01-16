@@ -16,18 +16,15 @@ const App = ({
   const [user, setUser] = useState(null);
   const Component = useRouter(routes, history);
 
-  useEffect(() => {
-    authHandler(setUser);
-    return () => {
-      setUser(null);
-    };
-  }, []);
+  const firebaseAuth = firebaseApp.auth();
+  useFirebaseAuth(firebaseAuth, setUser);
 
   const appState = {
     user,
-    firebaseAuth: firebaseApp.auth(),
+    firebaseAuth,
     history
   };
+
   return (
     <AppContext.Provider value={appState}>
       <Component />
@@ -64,16 +61,23 @@ const useRouter = (routes, history: History) => {
   return Component;
 };
 
-const authHandler = setUser => {
-  firebase.auth().onAuthStateChanged((user: firebase.User) => {
-    if (user) {
-      // User is signed in.
-      setUser(user);
-    } else {
-      // No user is signed in.
-      setUser(null);
-    }
-  });
+const useFirebaseAuth = (firebaseAuth: firebase.auth.Auth, setUser) => {
+  useEffect(
+    () => {
+      firebaseAuth.onAuthStateChanged((user: firebase.User) => {
+        if (user) {
+          setUser(user);
+        } else {
+          setUser(null);
+        }
+      });
+
+      return () => {
+        setUser(null);
+      };
+    },
+    [firebaseAuth]
+  );
 };
 
 export { App, AppContext };
