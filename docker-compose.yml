@@ -1,0 +1,6 @@
+version: "3"
+services:
+  firestore:
+    build: ./docker/firestore
+    ports:
+      - 8080:8080
