@@ -18,10 +18,10 @@ const App = ({
   const Component = useRouter(routes, history);
 
   const firebaseAuth = firebaseApp.auth();
-  useFirebaseAuth(firebaseAuth, setUser);
-
   const firestore = firebaseApp.firestore();
   firestore.settings({ timestampsInSnapshots: true });
+
+  useFirebaseAuth({ firebaseAuth, setUser });
 
   const appState: AppState = {
     user,
@@ -73,7 +73,13 @@ const useRouter = (routes, history: History) => {
   return Component;
 };
 
-const useFirebaseAuth = (firebaseAuth: firebase.auth.Auth, setUser) => {
+const useFirebaseAuth = ({
+  firebaseAuth,
+  setUser
+}: {
+  firebaseAuth: firebase.auth.Auth;
+  setUser: any;
+}) => {
   useEffect(
     () => {
       firebaseAuth.onAuthStateChanged((user: firebase.User) => {
