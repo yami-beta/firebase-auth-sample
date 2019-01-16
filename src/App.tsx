@@ -19,7 +19,7 @@ const App = ({
   const firebaseAuth = firebaseApp.auth();
   useFirebaseAuth(firebaseAuth, setUser);
 
-  const appState = {
+  const appState: AppState = {
     user,
     firebaseAuth,
     history
@@ -31,6 +31,12 @@ const App = ({
     </AppContext.Provider>
   );
 };
+
+interface AppState {
+  user: firebase.auth.Auth | null;
+  firebaseAuth: firebase.auth.Auth;
+  history: History;
+}
 
 const useRouter = (routes, history: History) => {
   const [location, setLocation] = useState(history.location);
@@ -80,4 +86,4 @@ const useFirebaseAuth = (firebaseAuth: firebase.auth.Auth, setUser) => {
   );
 };
 
-export { App, AppContext };
+export { App, AppContext, AppState };
