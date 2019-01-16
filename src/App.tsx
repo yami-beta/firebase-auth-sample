@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, createContext } from "react";
 import UniversalRouter from "universal-router";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 import { History } from "history";
 import { routes } from "./routes";
 
@@ -19,9 +20,13 @@ const App = ({
   const firebaseAuth = firebaseApp.auth();
   useFirebaseAuth(firebaseAuth, setUser);
 
+  const firestore = firebaseApp.firestore();
+  firestore.settings({ timestampsInSnapshots: true });
+
   const appState: AppState = {
     user,
     firebaseAuth,
+    firestore: firebaseApp.firestore(),
     history
   };
 
@@ -35,6 +40,7 @@ const App = ({
 interface AppState {
   user: firebase.auth.Auth | null;
   firebaseAuth: firebase.auth.Auth;
+  firestore: firebase.firestore.Firestore;
   history: History;
 }
 
