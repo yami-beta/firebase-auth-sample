@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, createContext } from "react";
-import firebase from "firebase";
 import UniversalRouter from "universal-router";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { History } from "history";
 import { IndexPage } from "./pages/IndexPage";
 import { LoginPage } from "./pages/LoginPage";
