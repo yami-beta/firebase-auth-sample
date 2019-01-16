@@ -3,30 +3,7 @@ import UniversalRouter from "universal-router";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { History } from "history";
-import { IndexPage } from "./pages/IndexPage";
-import { LoginPage } from "./pages/LoginPage";
-import { LogoutPage } from "./pages/LogoutPage";
-
-const routes = [
-  {
-    path: "",
-    action: (context: any) => {
-      return { content: IndexPage };
-    }
-  },
-  {
-    path: "/login",
-    action: (context: any) => {
-      return { content: LoginPage };
-    }
-  },
-  {
-    path: "/logout",
-    action: (context: any) => {
-      return { content: LogoutPage };
-    }
-  }
-];
+import { routes } from "./routes";
 
 const AppContext = createContext(null);
 const App = ({
@@ -65,6 +42,14 @@ const useRouter = (routes, history: History) => {
 
   useEffect(
     () => {
+      const unlisten = history.listen(location => setLocation(location));
+      return () => unlisten();
+    },
+    [history]
+  );
+
+  useEffect(
+    () => {
       router.resolve(location.pathname).then(route => {
         if (route.redirect) {
           history.replace(route.redirect);
@@ -72,10 +57,8 @@ const useRouter = (routes, history: History) => {
         }
         setComponent(() => route.content);
       });
-      const unlisten = history.listen(location => setLocation(location));
-      return () => unlisten();
     },
-    [history, location]
+    [location]
   );
 
   return Component;
