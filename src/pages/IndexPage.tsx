@@ -23,6 +23,13 @@ const IndexPage = () => {
           </Link>
         </p>
       )}
+      {user && (
+        <p>
+          <Link href="/users" history={history}>
+            Users
+          </Link>
+        </p>
+      )}
     </div>
   );
 };

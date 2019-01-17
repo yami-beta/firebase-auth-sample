@@ -1,6 +1,7 @@
 import { IndexPage } from "./pages/IndexPage";
 import { LoginPage } from "./pages/LoginPage";
 import { LogoutPage } from "./pages/LogoutPage";
+import { UsersPage } from "./pages/UsersPage";
 
 const routes = [
   {
@@ -19,6 +20,12 @@ const routes = [
     path: "/logout",
     action: (context: any) => {
       return { content: LogoutPage };
+    }
+  },
+  {
+    path: "/users",
+    action: (context: any) => {
+      return { content: UsersPage };
     }
   }
 ];
