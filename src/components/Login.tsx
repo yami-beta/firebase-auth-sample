@@ -1,25 +1,18 @@
 import React from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { History } from "history";
 
 const Login = ({
   firebaseAuth,
-  history
+  handleLogin
 }: {
   firebaseAuth: firebase.auth.Auth;
-  history: History;
+  handleLogin: (LoginResult) => void;
 }) => {
   const handleClick = async event => {
     event.preventDefault();
     const loginResult = await loginByGoogle(firebaseAuth);
-    if (loginResult.error) {
-      // eslint-disable-next-line no-console
-      console.log(loginResult.error);
-      return;
-    }
-
-    history.push("/");
+    handleLogin(loginResult);
   };
 
   return (
@@ -31,13 +24,17 @@ const Login = ({
   );
 };
 
+interface LoginResult {
+  user?: firebase.User;
+  error?: firebase.FirebaseError;
+}
 const loginByGoogle = (
   firebaseAuth: firebase.auth.Auth
-): Promise<{ user?: firebase.User; error?: Error }> => {
+): Promise<LoginResult> => {
   const provider = new firebase.auth.GoogleAuthProvider();
   return firebaseAuth
     .signInWithPopup(provider)
-    .then(result => {
+    .then((result: firebase.auth.UserCredential) => {
       // eslint-disable-next-line no-console
       console.log(result);
       // // This gives you a Google Access Token. You can use it to access the Google API.
@@ -46,7 +43,7 @@ const loginByGoogle = (
       // const user = result.user;
       return { user: result.user, error: null };
     })
-    .catch(error => {
+    .catch((error: firebase.FirebaseError) => {
       // eslint-disable-next-line no-console
       console.log(error);
       // Handle Errors here.
@@ -60,4 +57,4 @@ const loginByGoogle = (
     });
 };
 
-export { Login };
+export { Login, LoginResult };
