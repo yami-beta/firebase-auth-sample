@@ -3,5 +3,10 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    match /users/{uid} {
+      allow list: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow get, write: if request.auth != null && request.auth.uid == uid;
+    }
   }
 }
