@@ -6,9 +6,13 @@
   "author": "yami-beta <yami-beta@users.noreply.github.com>",
   "license": "MIT",
   "private": true,
+  "jest": {
+    "preset": "ts-jest"
+  },
   "scripts": {
     "lint:ts": "eslint --ext .ts,.tsx src/",
     "lint": "run-p lint:*",
+    "test": "jest",
     "build:ts": "webpack --mode production",
     "watch:ts": "webpack-dev-server --mode development",
     "build": "run-p build:*",

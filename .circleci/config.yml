@@ -30,7 +30,7 @@ jobs:
           root: ~/app
           paths:
             - "."
-  lint:
+  test:
     executor: nodejs
     steps:
       - attach_workspace:
@@ -38,6 +38,9 @@ jobs:
       - run:
           name: Lint
           command: yarn lint
+      - run:
+          name: Test
+          command: yarn test
 
   build:
     executor: nodejs
@@ -53,7 +56,7 @@ workflows:
   install_and_build:
     jobs:
       - install
-      - lint:
+      - test:
           requires:
             - install
       - build:
