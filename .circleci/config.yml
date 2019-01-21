@@ -4,7 +4,7 @@ executors:
   nodejs:
     working_directory: ~/app
     docker:
-      - image: circleci/node:10.14
+      - image: circleci/node:10.15
 
 jobs:
   install:
@@ -33,14 +33,23 @@ jobs:
   test:
     executor: nodejs
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - attach_workspace:
           at: ~/app
       - run:
+          name: Build
+          command: docker-compose build
+      - run:
           name: Lint
-          command: yarn lint
+          command: |
+            yarn lint
       - run:
           name: Test
-          command: yarn test
+          command: |
+            docker-compose up -d firestore
+            docker-compose run --rm app dockerize -wait http://firestore:8080 -timeout 60s
+            docker-compose run --rm app yarn test --color=false
 
   build:
     executor: nodejs
