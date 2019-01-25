@@ -26,7 +26,10 @@ describe("firestore.rules", () => {
   describe("/invalid", () => {
     const projectId = `test-invalid-collection-${Date.now()}`;
     const firestore = getTestApp(projectId).firestore();
-    firebaseTesting.loadFirestoreRules({ projectId, rules });
+
+    beforeEach(async () => {
+      await firebaseTesting.loadFirestoreRules({ projectId, rules });
+    });
 
     test("it should not write", async () => {
       await expect(
@@ -41,7 +44,10 @@ describe("firestore.rules", () => {
   describe("/users", () => {
     const projectId = `test-users-collection-${Date.now()}`;
     const firestore = getTestApp(projectId).firestore();
-    firebaseTesting.loadFirestoreRules({ projectId, rules });
+
+    beforeEach(async () => {
+      await firebaseTesting.loadFirestoreRules({ projectId, rules });
+    });
 
     test("it should write when user's uid === /users/{uid}", async () => {
       await expect(
